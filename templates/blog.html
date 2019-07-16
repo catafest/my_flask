@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block  content %}
+
+Content of the document......
+<h2>This is a HTML page</h2>
+<p>My nicknames are catafest and mythcat</p>
+<p>Now I used the nickname {{author}}.</p>
+{% if sunny %}
+ <p>Today it is sunny</p>
+{% else %}
+ <p>Today it is rainy</p>
+{% endif %}
+{% for post in posts %}
+	<h2>{{post.title}}</h2>
+	<p>author is: {{post.author}}</p>
+{% endfor %}
+
+{% endblock %}
