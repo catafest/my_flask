@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Upload</h1>
+      <form class="" action="{{  url_for('upload')  }}" method = "POST", enctype = "multipart/form-data">
+      {{  form.hidden_tag()  }}
+      {{  form.file(class = "btn btn-primary")  }}
+      {{  form.submit(class = "btn btn-primary")  }}
+      </form>
+  </div>
+</div>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endblock %}

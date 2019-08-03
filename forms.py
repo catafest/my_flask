@@ -5,3 +5,10 @@ class SignUpForm(FlaskForm):
     password = PasswordField('Password')
     submit = SubmitField('Sign up')
 
+class AddUser(FlaskForm):
+    username = StringField('Username')
+    password = PasswordField('Password')
+    email = StringField('Email')
+    submit = SubmitField('Sign up')
+
+
