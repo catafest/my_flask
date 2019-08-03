@@ -16,4 +16,7 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
+<form action="{{  url_for('download')  }}" method="POST">
+{{ form.download(class = "btn btn-primary") }}
+</form>
 {% endblock %}

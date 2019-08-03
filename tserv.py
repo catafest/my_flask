@@ -2,6 +2,9 @@ from flask import Flask
 from flask import render_template, redirect, url_for, session, logging
 from flask import request
 
+from flask import send_file
+from io import BytesIO
+
 from flask import flash
 
 
@@ -95,7 +98,8 @@ def about():
  
 class UploadForm(FlaskForm):
     file = FileField()
-    submit = SubmitField("submit")
+    submit = SubmitField("Submit")
+    download = SubmitField("Download")
     
 @app.route('/upload',methods = ['GET','POST'])
 def upload():
@@ -116,6 +120,23 @@ def file_database(name,data):
     con.commit()
     cursor.close()
     con.close()
+    
+@app.route('/download', methods=['GET','POST'])
+def download():
+    form = UploadForm()
+    if request.method == "POST":
+        con = sqlite3.connect("file_upload.db")
+        cursor = con.cursor()
+        cur_ex = cursor.execute(""" SELECT * FROM my_table """)
+        for i in cur_ex.fetchall():
+            name=i[0]
+            data=i[1]
+            break
+        con.commit()
+        cursor.close()
+        con.close()
+        return send_file(BytesIO(data), attachment_filename='test', as_attachment=True)
+    return render_template("home.html", form = form)
 '''
 @app.route('/register', methods = ['GET','POST'])
 def signup():
