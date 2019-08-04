@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template, redirect, url_for, session, logging
+from flask import render_template_string
 from flask import request
 
 from flask import send_file
@@ -7,7 +8,7 @@ from io import BytesIO
 
 from flask import flash
 
-
+import random
 
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -90,6 +91,14 @@ def user_delete(id):
 
 @app.route('/',methods = ['GET','POST'])
 def home():
+    # test flash message
+    out = random.randint(1,10)
+    if out in range(1,3):
+        flash(str(out),"warning" )
+    if out in range(4,6):
+        flash("This is a flash test for home.html with result:","success")
+    if out in range(7,10):
+        flash("This is a flash test for home.html with result:","danger")  
     return render_template("home.html")
 
 @app.route('/about')
@@ -103,8 +112,7 @@ class UploadForm(FlaskForm):
     
 @app.route('/upload',methods = ['GET','POST'])
 def upload():
-    form = UploadForm()
-    
+    form = UploadForm() 
     if request.method == "POST" and form.validate():
         if form.validate_on_submit():
             file_name = form.file.data
@@ -112,6 +120,7 @@ def upload():
             print("File {}".format(file_name.filename))
             return render_template("upload.html", form = form)
     return render_template("upload.html", form = form)
+
 def file_database(name,data):
     con=sqlite3.connect("file_upload.db")
     cursor = con.cursor()
@@ -137,6 +146,25 @@ def download():
         con.close()
         return send_file(BytesIO(data), attachment_filename='test', as_attachment=True)
     return render_template("home.html", form = form)
+
+# fix Exception error , like 404
+@app.errorhandler(Exception)
+def page_not_found(e):
+    flash(e, type(e))  
+    return render_template_string('''
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% set printed_messages = dict() %}
+          {% for category, message in messages %}
+            {% if message not in printed_messages %}
+              <p style="color: {{category}}">{{message}}</p>
+              {% set x = printed_messages.__setitem__(message, "value")  %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    ''')
+
 '''
 @app.route('/register', methods = ['GET','POST'])
 def signup():
@@ -147,7 +175,7 @@ def signup():
     else:
         print("ok!")
     return render_template('register.html', form = form)
-    '''
+'''
 @app.route('/register', methods = ['GET','POST'])
 def signup():
     form = NormalUser(request.form)
@@ -156,7 +184,10 @@ def signup():
         uemail = form.email.data
         flash('You were successfully logged in')
         return redirect(url_for('index'))
+    else:
+        flash('Error on signup task!')
     return render_template('register.html', form = form)
+
 # the default name main
 if __name__ == '__main__':
     app.run(debug=True)
