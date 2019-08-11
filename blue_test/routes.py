@@ -17,7 +17,7 @@ api = Blueprint('api', __name__)
 def home():
     return jsonify({'result' : 'This is main page!'})
 
-@app.route("/about")
+@api.route("/about")
 def about():
     return render_template('about.html', title='About')
 
