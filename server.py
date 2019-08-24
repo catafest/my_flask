@@ -11,6 +11,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
 
+#migrate 
+from flask_script import Manager 
+from flask_migrate import Migrate, MigrateCommand
+
 
 app = Flask (__name__)
 app.config['SECRET_KEY'] = 'abcdefg'
@@ -20,10 +24,22 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'server.sqlite')
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+
+# create migrate object with db 
+migrate = Migrate(app, db)
+# create manager 
+manager = Manager(app)
+# create db command for manager 
+manager.add_command('db', MigrateCommand)
+
+# add new columns into database 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
+    gender = db.Column(db.String(5), unique=True)
+    work = db.Column(db.String(33), unique=True)
+    city = db.Column(db.String(15), unique=True)
 
     def __init__(self, username, email):
         self.username = username
@@ -114,4 +130,6 @@ def user_add():
 
 # the default name main
 if __name__ == '__main__':
+    manager.run()
     app.run(debug=True)
+
