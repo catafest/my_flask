@@ -44,6 +44,9 @@ class User(db.Model):
     def __init__(self, username, email):
         self.username = username
         self.email = email
+        self.gender = gender
+        self.work = work
+        self.city = city
     '''
     def __rep_(self):
         return '<User %r>' % self.username
