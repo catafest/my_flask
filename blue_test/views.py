@@ -1,6 +1,8 @@
 from .extensions import db
 from .models import Texts
-from flask import Blueprint, jsonify, request
+#from flask import Blueprint, jsonify, request
+
+from flask import Blueprint, request
 
 main = Blueprint('main', __name__)
 @main.route('/add_text/<int:id>', methods = ['POST'])
@@ -17,5 +19,5 @@ def texts():
     texts=[]
     for txt in txt_list:
         texts.append({'title': txt.title, 'txt_content':txt.txt_content})
-    return jsonify ({'texts':texts})
+    return {'texts':texts}
     

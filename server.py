@@ -6,7 +6,7 @@ from forms import SignUpForm
 from forms import AddUser
 
 
-from flask import jsonify
+#from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
@@ -98,7 +98,7 @@ def adduser():
         #db.session.add(new_user)
         #db.session.commit()
         print("ok!")
-    #return jsonify(new_user)
+    #return new_user
 
     return render_template('adduser.html', form = form)
 
@@ -108,18 +108,18 @@ def users():
     users = User.query.all()
     #return users_schema.jsonify(users)
     all_users = users_schema.dump(users)
-    return jsonify(all_users.data)
+    return all_users.data
 
 @app.route("/adduser/<id>", methods=["GET"])
 def get_user():
     all_users = User.query.get(id)
     result = users_schema.dump(all_users)
-    return jsonify(result.data)
+    return result.data
 
 '''
         keywords = Keyword.query.all()
         result = keywords_schema.dump(keywords)
-        return jsonify([d['keyword'] for d in result.data])
+        return [d['keyword'] for d in result.data]
 '''
 
 @app.route("/users/add", methods=['POST'])
@@ -129,7 +129,7 @@ def user_add():
     new_user = User(username, email)
     db.session.add(new_user)
     db.session.commit() 
-    return user_schema.jsonify(new_user)
+    return user_schema.new_user
 
 # the default name main
 if __name__ == '__main__':

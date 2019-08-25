@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify
+#from flask import Flask, request, jsonify
+from flask import Flask, request
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
@@ -54,20 +56,20 @@ def add_user():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify(new_user)
+    return new_user
 
 # endpoint to show all users
 @app.route("/adduser", methods=["GET"])
 def get_user():
     all_users = User.query.all()
     result = users_schema.dump(all_users)
-    return jsonify(result.data)
+    return result.data
 
 # endpoint to get user detail by id
 @app.route("/adduser/<id>", methods=["GET"])
 def user_detail(id):
     user = User.query.get(id)
-    return user_schema.jsonify(user)
+    return user_schema.user
 
 # endpoint to update user
 @app.route("/adduser/<id>", methods=["PUT"])
@@ -80,7 +82,7 @@ def user_update(id):
     user.username = username
 
     db.session.commit()
-    return user_schema.jsonify(user)
+    return user_schema.user
 
 # endpoint to delete user
 @app.route("/adduser/<id>", methods=["DELETE"])
@@ -89,6 +91,6 @@ def user_delete(id):
     db.session.delete(user)
     db.session.commit()
 
-    return user_schema.jsonify(user)
+    return user_schema.user
 if __name__ == '__main__':
     app.run()

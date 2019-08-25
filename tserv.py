@@ -10,7 +10,7 @@ from flask import flash
 
 import random
 
-from flask import jsonify
+#from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
@@ -55,37 +55,38 @@ def users():
     users = User.query.all()
     #return users_schema.jsonify(users)
     all_users = users_schema.dump(users)
-    return jsonify(all_users.data)
+    #print(all_users)
+    return all_users.data
 
 @app.route("/users/<id>", methods=['POST'])
 def user_post(id):
     user_post = User.query.get(id)
-    print(user_post)
+    #print(user_post)
     username = request.json['username']
     email = request.json['email']
     user_post.username = username
     user_post.email = email
     db.session.commit()
-    return user_schema.jsonify(user_post)
+    return user_schema.user_post
 
 @app.route("/users/<id>", methods=['PUT'])
 def user_put(id):
     user_put = User.query.get(id)
-    print(user_put)
+    #print(user_put)
     username = request.json['username']
     email = request.json['email']
     user_put.username = username
     user_put.email = email
     db.session.commit()
-    return user_schema.jsonify(user_put)
+    return user_schema.user_put
 
 @app.route("/users/<id>", methods=['DELETE'])
 def user_delete(id):
     user_delete = User.query.get(id)
-    print(user_delete)
+    #print(user_delete)
     db.session.delete(user_delete)
     db.session.commit()
-    return user_schema.jsonify(user_delete)
+    return user_schema.user_delete
 
 # create a wrarp of localhost
 
@@ -96,9 +97,9 @@ def home():
     if out in range(1,3):
         flash(str(out),"warning" )
     if out in range(4,6):
-        flash("This is a flash test for home.html with result:","success")
+        flash("This is a flash test for home.html with success result:","success")
     if out in range(7,10):
-        flash("This is a flash test for home.html with result:","danger")  
+        flash("This is a flash test for home.html with danger result:","danger")  
     return render_template("home.html")
 
 @app.route('/about')

@@ -1,4 +1,7 @@
-from flask import Blueprint, jsonify, request
+#from flask import Blueprint, jsonify, request
+# new flask
+from flask import Blueprint, request
+
 from flask_login import login_user, current_user, logout_user, login_required
 
 # import forms
@@ -15,7 +18,7 @@ api = Blueprint('api', __name__)
 # root to home main function
 @api.route("/home")
 def home():
-    return jsonify({'result' : 'This is main page!'})
+    return {'result' : 'This is main page!'}
 
 @api.route("/about")
 def about():
