@@ -1,17 +1,29 @@
 {% extends 'base.html' %}
 
 {% block  content %}
-<h2>Sign up</h2>
+<h2>Sign up with a new user!</h2>
 <form action = "" method = "post">
 <p> {{form.username.label}}<br>
-    {{form.username(size=30)}}
+    {{form.username(size=80)}}
 </p>
 <p>{{form.password.label}}<br>
-    {{form.password(size=30)}}
+    {{form.password(size=120)}}
 </p>
 <p>
     {{form.email.label}}<br>
-    {{form.email(size=30)}}
+    {{form.email(size=120)}}
+</p>
+<p>
+    {{form.gender.label}}<br>
+    {{form.gender(size=5)}}
+</p>
+<p>
+    {{form.work.label}}<br>
+    {{form.work(size=33)}}
+</p>
+<p>
+    {{form.city.label}}<br>
+    {{form.city(size=15)}}
 </p>
 <p>{{form.submit()}}</p>
 </form>

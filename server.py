@@ -36,6 +36,7 @@ manager.add_command('db', MigrateCommand)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
+    password = db.Column(db.String(120), unique=True)
     email = db.Column(db.String(120), unique=True)
     gender = db.Column(db.String(5), unique=True)
     work = db.Column(db.String(33), unique=True)
@@ -43,37 +44,54 @@ class User(db.Model):
 
     def __init__(self, username, email):
         self.username = username
+        self.password = password
         self.email = email
         self.gender = gender
         self.work = work
         self.city = city
-    '''
-    def __rep_(self):
-        return '<User %r>' % self.username
-    '''
+    # add 27 aug 
+    def __repr__(self):
+        return f"User('{self.username}','{self.email}','{self.email}')"
+    
+#this is a UserSchema for User model
 class UserSchema(ma.ModelSchema):
     class Meta:
         model = User
+        
+        
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+#home pages routes
 
 # create a wrarp of localhost
 @app.route('/')
 def home():
-    return 'Hello world'
+    return render_template('home.html')
 
+# open about.html page 
 @app.route('/about')
 def about():
-        return 'The about page'
+    return render_template('about.html')
+
+#blog pages routes
+
+# open blog.html page 
 @app.route('/blog')
 def blog():
     posts = [{'title':'Title 1', 'author': 'author 1'},{'title': 'Title 2', 'author':'author 2'}]
     return render_template('blog.html', author = 'catafest', sunny=True, posts = posts)
 # creaza a regula variabila ( variable rules)
+
+# open blog.html with id
 @app.route('/blog/<blog_id>')
 def blogpost(blog_id):
     return 'This is the post '+str(blog_id)
 
+
+#authentication pages routes
+
+# open signup.html
 @app.route('/signup', methods = ['GET','POST'])
 def signup():
     form = SignUpForm()
@@ -84,22 +102,30 @@ def signup():
         print("ok!")
     return render_template('signup.html', form = form)
 
-@app.route('/adduser', methods = ['POST'])
+ # open adduser.html
+@app.route('/adduser', methods = ['GET','POST'])
 def adduser():
-    form = AddUser()
-    if form.is_submitted():
-        result = request.form
+    addform = AddUser()
+    if addform.is_submitted():
+        result = request.addform
+        print('if user.html')
         return render_template('user.html', result = result)
     else:
         #username = request.json['username']
-        #email = request.json['email']
-
-        #new_user = User(username, email)
-        #db.session.add(new_user)
-        #db.session.commit()
-        print("ok!")
-    #return new_user
-
+        username = request.get_json('username')
+        print("ok")
+        password = request.json['password']
+        print("ok2")
+        email = request.json['email']
+        gender = request.json['gender']
+        work = request.json['work']
+        city = request.json['city']
+        new_user = User(username, password, email, gender, work, city)
+        db.session.add(new_user)
+        db.session.commit()
+        print('else new_user')
+        #return new_user
+    print('adduser.html')
     return render_template('adduser.html', form = form)
 
 
@@ -110,6 +136,45 @@ def users():
     all_users = users_schema.dump(users)
     return all_users.data
 
+# using request:URLparameters, form and json 
+
+# request using the URL parameter :
+# http://127.0.0.1:5000/url_parameter?my_parameter=my_value
+# the result will be: The my_parameter is: my_value
+@app.route("/url_parameter")
+def url_parameter():
+    my_parameter = request.args.get('my_parameter')
+    return '<h1>The my_parameter is: {}</h1>'.format(my_parameter)
+# request using the URL many parameters :
+# http://127.0.0.1:5000/url_parameters?my_p1=val1&my_p2=val2
+# the result will be: The my_p1 is: val1
+# The my_p2 is: val2
+# Use both my_p1 and my_p2 also you get an error like this:
+# The browser (or proxy) sent a request that this server could not understand.
+@app.route("/url_parameters")
+def url_parameters():
+    my_p1 = request.args.get('my_p1')
+    my_p2 = request.args['my_p2']
+    return '''<h1>The my_p1 is: {}</h1>
+<h1>The my_p2 is: {}</h1>
+'''.format(my_p1,my_p2)
+ # request with HTML source code in python area
+@app.route("/request_with_form", methods=['POST','GET'])
+def request_with_form():
+    if request.method == 'POST':
+         # in this case I used request.form.get
+        my_parameter = request.form.get("my_parameter")
+        return '<h1>The parameter my_parameter is: {}</h1>'.format(my_parameter)
+    return '''<form action="" method="POST">
+Input of my_parameter <input type="text" name="my_parameter">
+<input type="submit">
+</form>'''
+@app.route("/request_with_json", methods=['POST','GET'])
+def request_with_json():
+    import requests
+    res = requests.post('http://localhost:5000/request_with_json', json={"my_parameter":"my_value"})
+    if res.ok:
+        return res
 @app.route("/adduser/<id>", methods=["GET"])
 def get_user():
     all_users = User.query.get(id)
@@ -124,6 +189,7 @@ def get_user():
 
 @app.route("/users/add", methods=['POST'])
 def user_add():
+    user = User.query.get(id)
     username = request.json['username']
     email = request.json['email']
     new_user = User(username, email)
