@@ -102,41 +102,7 @@ def signup():
         print("ok!")
     return render_template('signup.html', form = form)
 
- # open adduser.html
-@app.route('/adduser', methods = ['GET','POST'])
-def adduser():
-    addform = AddUser()
-    if addform.is_submitted():
-        result = request.addform
-        print('if user.html')
-        return render_template('user.html', result = result)
-    else:
-        #username = request.json['username']
-        username = request.get_json('username')
-        print("ok")
-        password = request.json['password']
-        print("ok2")
-        email = request.json['email']
-        gender = request.json['gender']
-        work = request.json['work']
-        city = request.json['city']
-        new_user = User(username, password, email, gender, work, city)
-        db.session.add(new_user)
-        db.session.commit()
-        print('else new_user')
-        #return new_user
-    print('adduser.html')
-    return render_template('adduser.html', form = form)
-
-
-@app.route("/users/", methods=['GET'])
-def users():
-    users = User.query.all()
-    #return users_schema.jsonify(users)
-    all_users = users_schema.dump(users)
-    return all_users.data
-
-# using request:URLparameters, form and json 
+# using request:URLparameters./s, form and json 
 
 # request using the URL parameter :
 # http://127.0.0.1:5000/url_parameter?my_parameter=my_value
@@ -175,6 +141,62 @@ def request_with_json():
     res = requests.post('http://localhost:5000/request_with_json', json={"my_parameter":"my_value"})
     if res.ok:
         return res
+    
+# 
+
+# open adduser.html
+@app.route('/adduser', methods = ['GET','POST'])
+def adduser():
+    form = AddUser()
+    if form.is_submitted():
+        result = request.form
+        return render_template('user.html', result = result)
+    else:
+        username = request.json('username')
+        password = request.json['password']
+        email = request.json['email']
+        gender = request.json['gender']
+        work = request.json['work']
+        city = request.json['city']
+        new_user = User(username, password, email, gender, work, city)
+        db.session.add(new_user)
+        db.session.commit()
+        return render_template('adduser.html', form = form)
+    return render_template('adduser.html', form = form)
+
+@app.route('/register', methods = ['GET','POST'])
+def register():
+    form = AddUser(request.form)
+    if request.method == 'POST' and form.validate():
+        username = form.username.data
+        password = form.username.data
+        email = form.username.data
+        gender = form.username.data
+        work = form.username.data
+        city = form.username.data
+        new_user = User(username, password, email, gender, work, city)
+        db.session.add(new_user)
+        db.session.commit()
+        return render_template('about.html')
+    else:
+        return render_template('adduser.html', form = form)
+
+
+@app.route("/users", methods=['GET'])
+def users():
+    users = User.query.all()
+    result =  users_schema(users)
+    #result = users_schema.dump(users)
+    return render_template('user.html', result = result)
+
+@app.route("/allusers",methods = ['GET'])
+def allusers():
+    users= User.query.all()
+    allusers=[]
+    for user in users:
+        result=allusers.append({'username': user.username})
+    return render_template('user.html', result = result)
+
 @app.route("/adduser/<id>", methods=["GET"])
 def get_user():
     all_users = User.query.get(id)

@@ -9,6 +9,9 @@ class AddUser(FlaskForm):
     username = StringField('Username')
     password = PasswordField('Password')
     email = StringField('Email')
+    gender = StringField('Gender')
+    work = StringField('Work')
+    city = StringField('City')
     submit = SubmitField('Sign up')
 
 
