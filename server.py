@@ -15,13 +15,12 @@ import os
 from flask_script import Manager 
 from flask_migrate import Migrate, MigrateCommand
 
-
 app = Flask (__name__)
 app.config['SECRET_KEY'] = 'abcdefg'
 # set SQLAlchemy
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'server.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'server.sqlite')
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -34,6 +33,8 @@ manager.add_command('db', MigrateCommand)
 
 # add new columns into database 
 class User(db.Model):
+    __tablename__ = 'user'
+    __table_args__ = {'sqlite_autoincrement': True}
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(120), unique=True)
