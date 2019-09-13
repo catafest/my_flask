@@ -2,7 +2,7 @@
 
 {% block  content %}
 <h2>Sign up with a new user!</h2>
-<form action = "" method = "post">
+<form id="reg" action="/register" method = "post">
 <p> {{form.username.label}}<br>
     {{form.username(size=80)}}
 </p>
@@ -25,6 +25,6 @@
     {{form.city.label}}<br>
     {{form.city(size=15)}}
 </p>
-<p>{{form.submit()}}</p>
+<p>{{ form.submit(form="reg") }}</p>
 </form>
 {% endblock %}

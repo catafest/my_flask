@@ -21,6 +21,7 @@ app.config['SECRET_KEY'] = 'abcdefg'
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'server.sqlite')
+print(app.config['SQLALCHEMY_TRACK_MODIFICATIONS'], app.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -43,16 +44,16 @@ class User(db.Model):
     work = db.Column(db.String(33), unique=True)
     city = db.Column(db.String(15), unique=True)
 
-    def __init__(self, username, email):
+    def __init__(self, username=None, password=None, email=None, gender=None, work=None, city=None):
         self.username = username
         self.password = password
         self.email = email
         self.gender = gender
         self.work = work
         self.city = city
-    # add 27 aug 
+    # add 13 aug 
     def __repr__(self):
-        return f"User('{self.username}','{self.email}','{self.email}')"
+        return '<User %r>' % (self.username)
     
 #this is a UserSchema for User model
 class UserSchema(ma.ModelSchema):
@@ -168,7 +169,9 @@ def adduser():
 @app.route('/register', methods = ['GET','POST'])
 def register():
     form = AddUser(request.form)
-    if request.method == 'POST' and form.validate():
+    if form.validate():
+        print("validate")
+    if request.method == 'POST' :
         username = form.username.data
         password = form.username.data
         email = form.username.data
@@ -176,6 +179,7 @@ def register():
         work = form.username.data
         city = form.username.data
         new_user = User(username, password, email, gender, work, city)
+        print(new_user)
         db.session.add(new_user)
         db.session.commit()
         return render_template('about.html')
