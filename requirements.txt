@@ -17,7 +17,7 @@ initial-setup==0.3.69
 langtable==0.0.43
 notify2==0.3.1
 ntplib==0.3.3
-numpy==1.16.4
+numpy==1.22.0
 olefile==0.46
 ordered-set==2.0.2
 pid==2.2.3
