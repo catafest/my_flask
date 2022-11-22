@@ -21,7 +21,7 @@ numpy==1.16.4
 olefile==0.46
 ordered-set==2.0.2
 pid==2.2.3
-Pillow==5.4.1
+Pillow==9.3.0
 productmd==1.21
 pwquality==1.4.0
 pycairo==1.18.1
